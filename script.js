@@ -4,6 +4,11 @@ let guessCount = 0;
 const scores = [];
 let range = 0;
 
+let nameprompt = prompt("Enter your name:");
+let stringname = String(nameprompt.toLowerCase());
+let actualname = stringname[0].toUpperCase() + stringname.slice(1);
+let extra = "nothing";
+
 document.getElementById("playBtn").addEventListener("click", play);
 document.getElementById("guessBtn").addEventListener("click", makeGuess);
 
@@ -15,7 +20,7 @@ function play(){
         }
         levels[i].disabled = true;
     }
-    document.getElementById("msg").textContent = "Guess a number from 1-" + range;
+    document.getElementById("msg").textContent = actualname + ", guess a number from 1-" + range;
 
     answer = Math.floor(Math.random()*range) + 1;
     guessCount = 0;
@@ -32,29 +37,41 @@ function makeGuess(){
         msg.textContent = "Please enter a valid number";
         return; 
     }
+
     guessCount++;
+     if (Math.abs(guess - answer) <= 2){
+    extra = "Hot! The answer is at most 2 away, " + actualname + "!"
+    }   
+    else if (Math.abs(guess - answer) <= 5) {
+    extra = "Warm! The answer is at most 5 away, " + actualname + "!"
+    }
+    else{
+    extra = "Cold! The answer is more than 5 away, " + actualname + "!";
+    }
     if(guess===answer){
-        msg.textContent = "Correct! It took " + guessCount + " tries.";
+        msg.textContent = "Correct! It took " + actualname + " " + guessCount + " tries!";
         updateScore(guessCount);
     resetGame();
     }
     else if (guess < answer){
-        msg.textContent = "Too low! Try again.";
+        msg.textContent = "Too low, " + actualname + "! Try again. " + extra;
     }
     else{
-        msg.textContent = "Too high! Try again.";
+        msg.textContent = "Too high, " + actualname + "! Try again. " + extra;
     }
 }
 
+    
+
 function updateScore(score){
     scores.push(score);
-    wins.textContent = "Total wins: " + scores.length;
+    wins.textContent = actualname + "'s total wins: " + scores.length;
     let sum = 0;
     for (let i = 0; i < scores.length; i++){
         sum += scores[i];
 
     }
-    avgScore.textContent = "Average Score: " + (sum/scores.length).toFixed(1);
+    avgScore.textContent = actualname + "'s average score: " + (sum/scores.length).toFixed(1);
 
     scores.sort(function(a,b){return a-b});
 
