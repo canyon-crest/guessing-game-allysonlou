@@ -9,10 +9,16 @@ let nameprompt = prompt("Enter your name:");
 let stringname = String(nameprompt.toLowerCase());
 let actualname = stringname[0].toUpperCase() + stringname.slice(1);
 let extra = "nothing";
+let startTime = Date.now();
+let totalTime = 0;
+let fastestTime = Infinity; 
 
 document.getElementById("playBtn").addEventListener("click", play);
 document.getElementById("guessBtn").addEventListener("click", makeGuess);
 document.getElementById("giveUpBtn").addEventListener("click", end);
+document.getElementById("guess").addEventListener("focus", function() {
+    this.value = "";
+});
 document.getElementById("guess").addEventListener("keypress", function(e){
     if (e.key === "Enter") makeGuess();
 });
@@ -55,6 +61,7 @@ function play(){
     giveUpBtn.disabled = false;
     playBtn.disabled = true;
     
+    startTime = new Date().getTime();
 }
 
 function makeGuess(){
@@ -85,11 +92,12 @@ function makeGuess(){
     else{
         msg.textContent = "Too high, " + actualname + "! Try again. " + extra;
     }
+
 }   
 
 function end(){
     updateScore(range);
-    msg.textContent = actualname + "gave up! The answer was " + answer + ". Score set to " + range;
+    msg.textContent = actualname + " gave up! The answer was " + answer + ". Score set to " + range;
     resetGame();
 }
 
@@ -107,13 +115,26 @@ function updateScore(score){
 
     let lb = document.getElementsByName("leaderboard");
     for (let i = 0; i < lb.length; i++){
-        if(i < scores[i] !== undefined){
+        if(scores[i] !== undefined){
             lb[i].textContent = scores [i];
         }
          else{   
             lb[i].textContent = "--"
         }
     }
+
+    let endTime = new Date().getTime();
+    let duration = (endTime - startTime) / 1000;
+    totalTime += duration;
+
+    if (duration < fastestTime){
+        fastestTime = duration;
+    }
+
+    document.getElementById("fastest").textContent = "Fastest Time: " + fastestTime.toFixed(2);
+    document.getElementById("avgTime").textContent = "Average Time: " + (totalTime / (scores.length)).toFixed(2);
+
+    document.getElementById("wins").textContent = actualname + "'s total wins:" + scores.length;
 }
 
 function resetGame(){
