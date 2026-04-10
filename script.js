@@ -4,6 +4,7 @@ let guessCount = 0;
 const scores = [];
 let range = 0;
 
+
 let nameprompt = prompt("Enter your name:");
 let stringname = String(nameprompt.toLowerCase());
 let actualname = stringname[0].toUpperCase() + stringname.slice(1);
@@ -11,6 +12,31 @@ let extra = "nothing";
 
 document.getElementById("playBtn").addEventListener("click", play);
 document.getElementById("guessBtn").addEventListener("click", makeGuess);
+document.getElementById("giveUpBtn").addEventListener("click", end);
+document.getElementById("guess").addEventListener("keypress", function(e){
+    if (e.key === "Enter") makeGuess();
+});
+
+function time(){
+    const d = new Date();
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+    let day = d.getDate();
+    let suffix = "th";
+    if (day < 11 || day > 13){
+        if (day % 10 === 1) suffix = "st";
+        else if (day % 10 === 2) suffix = "nd";
+        else if (day % 10 === 3) suffix = "rd";
+    }
+
+    let iNeedtoreturn = months[d.getMonth()] + " " + day + suffix + ", " +  d.getFullYear() + " - " + d.toLocaleTimeString();
+
+    document.getElementById("date").textContent = iNeedtoreturn;
+
+    return iNeedtoreturn;
+}
+setInterval(time, 1000);
+time();
 
 function play(){
     let levels = document.getElementsByName("level");
@@ -59,9 +85,13 @@ function makeGuess(){
     else{
         msg.textContent = "Too high, " + actualname + "! Try again. " + extra;
     }
-}
+}   
 
-    
+function end(){
+    updateScore(range);
+    msg.textContent = actualname + "gave up! The answer was " + answer + ". Score set to " + range;
+    resetGame();
+}
 
 function updateScore(score){
     scores.push(score);
@@ -77,8 +107,11 @@ function updateScore(score){
 
     let lb = document.getElementsByName("leaderboard");
     for (let i = 0; i < lb.length; i++){
-        if(i < scores.length){
-            lb[i].textContent = scores[i];
+        if(i < scores[i] !== undefined){
+            lb[i].textContent = scores [i];
+        }
+         else{   
+            lb[i].textContent = "--"
         }
     }
 }
@@ -93,3 +126,4 @@ function resetGame(){
     h.disabled = false;
 
 }
+
